@@ -6,29 +6,35 @@ import com.github.ajalt.timberkt.Timber
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.placemark.databinding.ActivityMainBinding
 import ie.setu.placemark.models.PlacemarkModel
+import ie.setu.placemark.main.MainApp
 import timber.log.Timber.Forest.i
 
 class PlacemarkActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    lateinit var app: MainApp
+    var placemark = PlacemarkModel()
 
-    var placemark = ArrayList<PlacemarkModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Timber.plant(Timber.DebugTree())
-
-        i("Placemark Activity started..")
-
+        app = application as MainApp
+        i("Placemark Activity started...")
         binding.btnAdd.setOnClickListener {
             //i("add Button Pressed")
-            val title = binding.placemarkTitle.text.toString()
-            val description = binding.placemarkDescription.text.toString()
-            if (title.isNotEmpty()) {
-                placemark.add( PlacemarkModel(title, description) )
+            placemark.title = binding.placemarkTitle.text.toString()
+            placemark.description = binding.placemarkDescription.text.toString()
+            if (placemark.title.isNotEmpty()) {
+                app.placemarks.add( placemark.copy() )
                 i("add Button Pressed: $placemark")
+                for (i in app.placemarks.indices)
+                {
+                    i("Placemark[$i]: ${this.app.placemarks[i]}")
+                }
+                setResult(RESULT_OK)
+                finish()
             }
             else {
                 Snackbar
