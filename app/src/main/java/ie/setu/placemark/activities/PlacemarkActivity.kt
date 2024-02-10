@@ -1,9 +1,15 @@
 package ie.setu.placemark.activities
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import com.github.ajalt.timberkt.Timber
 import com.google.android.material.snackbar.Snackbar
+import ie.setu.placemark.R
 import ie.setu.placemark.databinding.ActivityMainBinding
 import ie.setu.placemark.models.PlacemarkModel
 import ie.setu.placemark.main.MainApp
@@ -19,6 +25,9 @@ class PlacemarkActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.toolbarAdd.title = title
+        setSupportActionBar(binding.toolbarAdd)
 
         app = application as MainApp
         i("Placemark Activity started...")
@@ -42,5 +51,21 @@ class PlacemarkActivity : AppCompatActivity() {
                     .show()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_cancel -> {
+                val launcherIntent = Intent(this, PlacemarkListActivity::class.java)
+                startActivity(launcherIntent)
+                //getResult.launch(launcherIntent)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_addplacemark, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
