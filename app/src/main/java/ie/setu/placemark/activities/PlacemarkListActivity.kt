@@ -10,11 +10,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import ie.setu.placemark.R
 import ie.setu.placemark.adapters.PlacemarkAdapter
+import ie.setu.placemark.adapters.PlacemarkListener
 import ie.setu.placemark.databinding.ActivityPlacemarkListBinding
 import ie.setu.placemark.main.MainApp
+import ie.setu.placemark.models.PlacemarkModel
 
 
-class PlacemarkListActivity : AppCompatActivity() {
+class PlacemarkListActivity : AppCompatActivity(), PlacemarkListener {
 
     lateinit var app: MainApp
     private lateinit var binding: ActivityPlacemarkListBinding
@@ -31,7 +33,8 @@ class PlacemarkListActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks)
+        //binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks)
+        binding.recyclerView.adapter = PlacemarkAdapter(app.placemarks.findAll(), this)
 
     }
 
@@ -50,7 +53,7 @@ class PlacemarkListActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
-                (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, app.placemarks.size)
+                (binding.recyclerView.adapter)?.notifyItemRangeChanged(0, app.placemarks.findAll().size)
             }
         }
 
@@ -58,5 +61,21 @@ class PlacemarkListActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_main, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    override fun onPlacemarkClick(placemark: PlacemarkModel) {
+        val launcherIntent = Intent(this, PlacemarkActivity::class.java)
+        launcherIntent.putExtra("placemark_edit", placemark)
+        getClickResult.launch(launcherIntent)
+    }
+
+    private val getClickResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                (binding.recyclerView.adapter)?.
+                notifyItemRangeChanged(0,app.placemarks.findAll().size)
+            }
+        }
 
 }

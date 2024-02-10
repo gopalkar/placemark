@@ -1,13 +1,9 @@
 package ie.setu.placemark.activities
 
-import android.app.Activity
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
-import com.github.ajalt.timberkt.Timber
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.placemark.R
 import ie.setu.placemark.databinding.ActivityMainBinding
@@ -31,23 +27,29 @@ class PlacemarkActivity : AppCompatActivity() {
 
         app = application as MainApp
         i("Placemark Activity started...")
+
+        if (intent.hasExtra("placemark_edit")) {
+            placemark = intent.extras?.getParcelable("placemark_edit")!!
+            binding.placemarkTitle.setText(placemark.title)
+            binding.placemarkDescription.setText(placemark.description)
+            binding.btnAdd.text = getString(R.string.button_savePlacemark)
+        }
+
         binding.btnAdd.setOnClickListener {
             //i("add Button Pressed")
             placemark.title = binding.placemarkTitle.text.toString()
             placemark.description = binding.placemarkDescription.text.toString()
             if (placemark.title.isNotEmpty()) {
-                app.placemarks.add( placemark.copy() )
-                i("add Button Pressed: $placemark")
-                for (i in app.placemarks.indices)
-                {
-                    i("Placemark[$i]: ${this.app.placemarks[i]}")
-                }
+                if (intent.hasExtra("placemark_edit"))
+                    app.placemarks.update( placemark.copy() )
+                else
+                    app.placemarks.create( placemark.copy() )
                 setResult(RESULT_OK)
                 finish()
             }
             else {
                 Snackbar
-                    .make(it,"Please Enter a title", Snackbar.LENGTH_LONG)
+                    .make(it,getString(R.string.warning_missingTitle), Snackbar.LENGTH_LONG)
                     .show()
             }
         }
@@ -55,9 +57,9 @@ class PlacemarkActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.item_cancel -> {
-                val launcherIntent = Intent(this, PlacemarkListActivity::class.java)
-                startActivity(launcherIntent)
+            R.id.item_cancel -> { finish()
+//                val launcherIntent = Intent(this, PlacemarkListActivity::class.java)
+//                startActivity(launcherIntent)
                 //getResult.launch(launcherIntent)
             }
         }
