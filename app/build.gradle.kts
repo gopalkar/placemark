@@ -52,4 +52,5 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.github.ajalt:timberkt:1.5.1")
     implementation("com.google.android.material:material:1.9.0")
+    implementation("com.squareup.picasso:picasso:2.71828")
 }
