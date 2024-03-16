@@ -48,7 +48,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".activities.PlacemarkActivity">
+        <activity android:name=".activities.PlacemarkView">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

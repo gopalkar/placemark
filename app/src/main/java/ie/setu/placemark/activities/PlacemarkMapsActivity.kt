@@ -56,8 +56,10 @@ class PlacemarkMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListen
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        val placemark : PlacemarkModel = marker.tag as PlacemarkModel
-        contentBinding.currentTitle.text = placemark.title
+        val tag = marker.tag as Long
+        val placemark = app.placemarks.findById(tag)
+        //val placemark : PlacemarkModel = marker.tag as PlacemarkModel
+        contentBinding.currentTitle.text = placemark!!.title
         contentBinding.currentDescription.text = placemark.description
         Picasso.get()
             .load(placemark.image)
@@ -96,7 +98,7 @@ class PlacemarkMapsActivity : AppCompatActivity(), GoogleMap.OnMarkerClickListen
             val loc = LatLng(it.lat, it.lng)
             val options = MarkerOptions()
                 .title(it.title).position(loc)
-            map.addMarker(options)?.tag = it
+            map.addMarker(options)?.tag = it.id
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, it.zoom))
         }
     }
